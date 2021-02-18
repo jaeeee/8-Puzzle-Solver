@@ -106,16 +106,16 @@ void generalSearch(int choice, const shared_ptr<puzzle_state> &a)
     switch (choice)
     {
     case 1:
-    priority_queue<shared_ptr<puzzle_state>, uniform_cost_comparator> p_q;
+    // priority_queue<shared_ptr<puzzle_state>, uniform_cost_comparator> p_q;
     xd = a;
-    p_q.push(xd);
-    while (true) {
-        if (p_q.empty()) {
-            return;
-        }
-        auto current = p_q.top();
-        p_q.pop();   
-    }
+    // p_q.push(xd);
+    // while (true) {
+    //     if (p_q.empty()) {
+    //         return;
+    //     }
+    //     auto current = p_q.top();
+    //     p_q.pop();   
+    // }
         break;
     case 2:
         break;
@@ -210,8 +210,10 @@ int main()
 
     displayPuzzle(init_state->game_state);
 
+    cout << endl;
+
     int algoChoice;
-    cout << "select algorithm" << endl;
+    cout << "Choose algorithm" << endl;
     cout << "1. Uniform Cost Search" << endl;
     cout << "2. A* with the Misplaced Tile Heuristic" << endl;
     cout << "3. A* with the Manhattan Distance Heuristic" << endl;
@@ -242,8 +244,14 @@ int main()
             chosen = true;
             break;
         default:
-            cout << "Error: no choice provided" << endl;
+            cout << "Error: no choice provided. Re-enter choice or quit (ctrl + c)" << endl;
+            // char quit;
+            // cin >> quit; 
+            // if (quit == 'y') {
+            //     exit(0);
+            // } else {
             cin >> algoChoice;
+            // }
             break;
         }
     }
