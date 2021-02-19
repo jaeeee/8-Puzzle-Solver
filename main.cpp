@@ -181,18 +181,8 @@ struct manhattan_distance_comparator {
 
 bool checkComplete(const vector<vector<int>> &a)
 {
-    static vector<vector<int>> completed;
-    completed.resize(3, vector<int>(3, 0));
-    completed[0][0] = 1;
-    completed[0][1] = 2;
-    completed[0][2] = 3;
-    completed[1][0] = 4;
-    completed[1][1] = 5;
-    completed[1][2] = 6;
-    completed[2][0] = 7;
-    completed[2][1] = 8;
-    completed[2][2] = 0;
-    // displayPuzzle(completed);
+    static vector<vector<int>> completed = { {1,2,3}, {4,5,6}, {7,8,0} };
+    
     if (completed == a)
     {
         return true;
