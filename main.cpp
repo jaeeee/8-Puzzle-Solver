@@ -29,30 +29,6 @@ struct puzzle_state
     int depth = 0;
 };
 
-bool checkComplete(const vector<vector<int>> &a)
-{
-    vector<vector<int>> completed;
-    completed.resize(3, vector<int>(3, 0));
-    completed[0][0] = 1;
-    completed[0][1] = 2;
-    completed[0][2] = 3;
-    completed[1][0] = 4;
-    completed[1][1] = 5;
-    completed[1][2] = 6;
-    completed[2][0] = 7;
-    completed[2][1] = 8;
-    completed[2][2] = 0;
-    // displayPuzzle(completed);
-    if (completed == a)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 int countMisplacedTiles(const vector<vector<int>> &a) {
     int sum = 0;
     if (a[0][0] != 1) {
@@ -85,7 +61,88 @@ int countMisplacedTiles(const vector<vector<int>> &a) {
     return sum;    
 }
 
-struct uniform_cost_comparator{
+int evaluateManhattanDistance(const vector<vector<int>> &a) {
+    //find x,y pos of 1.
+    //distance += abs(x - actual_x) + abs(y - real_y)
+    
+    int distance = 0;
+
+    int pos_0_x, pos_0_y, pos_1_x, pos_1_y, pos_2_x, pos_2_y, pos_3_x, pos_3_y,
+        pos_4_x, pos_4_y, pos_5_x, pos_5_y, pos_6_x, pos_6_y, pos_7_x, pos_7_y, 
+        pos_8_x, pos_8_y = 0;
+
+    int real_1_x = 0;
+    int real_1_y = 0;
+    int real_2_x = 1;
+    int real_2_y = 0; 
+    int real_3_x = 2;
+    int real_3_y = 0;
+    int real_4_x = 0;
+    int real_4_y = 1; 
+    int real_5_x = 1;
+    int real_5_y = 1;
+    int real_6_x = 2;
+    int real_6_y = 1; 
+    int real_7_x = 0;
+    int real_7_y = 2;
+    int real_8_x = 1;
+    int real_8_y = 2;     
+    int real_0_x = 2;     
+    int real_0_y = 2;     
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (a[i][j] == 1) {
+                pos_1_x = j;
+                pos_1_y = i;
+            }
+            if (a[i][j] == 2) {
+                pos_2_x = j;
+                pos_2_y = i;
+            }
+            if (a[i][j] == 3) {
+                pos_3_x = j;
+                pos_3_y = i;
+            }
+            if (a[i][j] == 4) {
+                pos_4_x = j;
+                pos_4_y = i;
+            }
+            if (a[i][j] == 5) {
+                pos_5_x = j;
+                pos_5_y = i;
+            }
+            if (a[i][j] == 6) {
+                pos_6_x = j;
+                pos_6_y = i;
+            }
+            if (a[i][j] == 7) {
+                pos_7_x = j;
+                pos_7_y = i;
+            }
+            if (a[i][j] == 8) {
+                pos_8_x = j;
+                pos_8_y = i;
+            }
+            if (a[i][j] == 0) {
+                pos_0_x = j;
+                pos_0_y = i;
+            }          
+        }
+    }
+
+    //distance += abs(x - actual_x) + abs(y - real_y)
+    distance += abs(pos_0_x - real_0_x) + abs(pos_0_y - real_0_y) + abs(pos_1_x - real_1_x) + abs(pos_1_y - real_1_y) 
+        + abs(pos_2_x - real_2_x) + abs(pos_2_y - real_2_y) + abs(pos_3_x - real_3_x) + abs(pos_3_y - real_3_y)
+        + abs(pos_4_x - real_4_x) + abs(pos_4_y - real_4_y) + abs(pos_5_x - real_5_x) + abs(pos_5_y - real_5_y)
+        + abs(pos_6_x - real_6_x) + abs(pos_6_y - real_6_y) + abs(pos_7_x - real_7_x) + abs(pos_7_y - real_7_y)
+        + abs(pos_8_x - real_8_x) + abs(pos_8_y - real_8_y);
+
+    return distance;
+    
+}
+
+struct uniform_cost_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         if (a->depth > b->depth) {
         return true;
@@ -95,7 +152,7 @@ struct uniform_cost_comparator{
     }
 };
 
-struct misplaced_tile_comparator{
+struct misplaced_tile_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         int misplacedA = countMisplacedTiles(a->game_state);
         int misplacedB = countMisplacedTiles(b->game_state);
@@ -103,24 +160,59 @@ struct misplaced_tile_comparator{
             return true;
         } 
         else if (misplacedA == misplacedB) {
-        if (a->depth > b->depth) {
-            return true; 
-        }
+            if (a->depth > b->depth) {
+                return true; 
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
     }
 };
 
-// struct uniform_cost_comparator{
-//     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
-//         if (a->depth > b->depth) {
-//         return true;
-//         } else {
-//             return false;
-//         }
-//     }
-// };
+struct manhattan_distance_comparator {
+    bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
+        int manhattanA = evaluateManhattanDistance(a->game_state);
+        int manhattanB = evaluateManhattanDistance(b->game_state);
+        if (manhattanA > manhattanB) {
+            return true;
+        } else if (manhattanA == manhattanB) {
+            if (a->depth > b->depth) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+};
+
+
+bool checkComplete(const vector<vector<int>> &a)
+{
+    vector<vector<int>> completed;
+    completed.resize(3, vector<int>(3, 0));
+    completed[0][0] = 1;
+    completed[0][1] = 2;
+    completed[0][2] = 3;
+    completed[1][0] = 4;
+    completed[1][1] = 5;
+    completed[1][2] = 6;
+    completed[2][0] = 7;
+    completed[2][1] = 8;
+    completed[2][2] = 0;
+    // displayPuzzle(completed);
+    if (completed == a)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
 {
@@ -174,9 +266,6 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
     } 
     return return_value;
 }
-
-
-
 
 /*
 function general-search(problem, QUEUEING-FUNCTION)
@@ -253,7 +342,28 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
 
     // A* with the Manhattan distance heuristic.
     } else if (choice ==3) {
+        priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, manhattan_distance_comparator> p_q;
+    p_q.push(a);
+     while (true) {
+         if (p_q.empty()) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
+             return nullptr;
+        }
+         auto current = p_q.top();
+         p_q.pop();   
+         if (checkComplete(current->game_state) == true) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
+             return current;
+         } else {
+             vector<shared_ptr<puzzle_state>> next_states = expand(current);
+             for (const auto& next_state : next_states) {
+                 p_q.push(next_state);
+             }
+         }
 
+    }
     }
 
     // switch (choice)
@@ -370,7 +480,7 @@ int main()
     while (chosen == false)
     {
         if (algoChoice == 1) {
-            cout << "loading" << endl;
+            // cout << "loading" << endl;
             shared_ptr<puzzle_state> a = generalSearch(1, init_state);
             if (a == nullptr) {
                 cout << "The matrix is unsolvable." << endl; 
@@ -379,13 +489,21 @@ int main()
             cout << "The depth for this algorithm is " << a->depth << endl;
             }
             chosen = true;
-            cout << "done" << endl;
+            // cout << "done" << endl;
         } else if (algoChoice == 2) {
             shared_ptr<puzzle_state> a = generalSearch(2, init_state);
+            if (a == nullptr) {
+                cout << "The matrix is unsolvable." << endl;
+                return 0;
+            }
             cout << "The depth for this algorithm is " << a->depth << endl;
             chosen = true;
         } else if (algoChoice == 3) {
             shared_ptr<puzzle_state> a = generalSearch(3, init_state);
+             if (a == nullptr) {
+                cout << "The matrix is unsolvable." << endl;
+                return 0;
+            }
             cout << "The depth for this algorithm is " << a->depth << endl;
             chosen = true;
         }
