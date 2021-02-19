@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
@@ -139,7 +140,7 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
 2. A* with the Misplaced Tile heuristic.
 3. A* with the Manhattan distance heuristic.
      */
-
+    auto start = std::chrono::steady_clock::now();
     if (choice == 1) {
         //type, container, comparison function
         priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, uniform_cost_comparator> p_q;
@@ -147,11 +148,15 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
      p_q.push(a);
      while (true) {
          if (p_q.empty()) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
              return nullptr;
         }
          auto current = p_q.top();
          p_q.pop();   
          if (checkComplete(current->game_state) == true) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
              return current;
          } else {
              vector<shared_ptr<puzzle_state>> next_states = expand(current);
@@ -199,6 +204,16 @@ void displayPuzzle(vector<vector<int>> puzzle)
     }
 }
 
+void display_full_puzzle(const std::shared_ptr<puzzle_state>& state){
+    if(state == nullptr) {
+        return;
+    }
+    displayPuzzle(state->game_state);
+    std::cout << std::endl;
+    display_full_puzzle(state->pre_state);
+    
+}
+
 int main()
 {
 
@@ -244,8 +259,8 @@ int main()
 
     auto init_state = make_shared<puzzle_state>();
     init_state->game_state = move(puzzle);
-    init_state->empty_slot_x = currRow;
-    init_state->empty_slot_y = colZero;
+    init_state->empty_slot_y = currRow;
+    init_state->empty_slot_x = colZero;
 
     displayPuzzle(init_state->game_state);
 
