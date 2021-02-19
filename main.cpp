@@ -271,6 +271,7 @@ int main()
     cout << "1. Uniform Cost Search" << endl;
     cout << "2. A* with the Misplaced Tile Heuristic" << endl;
     cout << "3. A* with the Manhattan Distance Heuristic" << endl;
+    cout << endl;
 
     // if (checkComplete(puzzle) == true) {
     //     cout << "completed" << endl;
