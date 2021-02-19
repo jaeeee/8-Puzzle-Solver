@@ -60,24 +60,24 @@ int evaluateManhattanDistance(const vector<vector<int>> &a) {
         pos_4_x, pos_4_y, pos_5_x, pos_5_y, pos_6_x, pos_6_y, pos_7_x, pos_7_y, 
         pos_8_x, pos_8_y = 0;
 
-    int real_1_x = 0;
-    int real_1_y = 0;
-    int real_2_x = 1;
-    int real_2_y = 0; 
-    int real_3_x = 2;
-    int real_3_y = 0;
-    int real_4_x = 0;
-    int real_4_y = 1; 
-    int real_5_x = 1;
-    int real_5_y = 1;
-    int real_6_x = 2;
-    int real_6_y = 1; 
-    int real_7_x = 0;
-    int real_7_y = 2;
-    int real_8_x = 1;
-    int real_8_y = 2;     
-    int real_0_x = 2;     
-    int real_0_y = 2;     
+    const int real_1_x = 0;
+    const int real_1_y = 0;
+    const int real_2_x = 1;
+    const int real_2_y = 0; 
+    const int real_3_x = 2;
+    const int real_3_y = 0;
+    const int real_4_x = 0;
+    const int real_4_y = 1; 
+    const int real_5_x = 1;
+    const int real_5_y = 1;
+    const int real_6_x = 2;
+    const int real_6_y = 1; 
+    const int real_7_x = 0;
+    const int real_7_y = 2;
+    const int real_8_x = 1;
+    const int real_8_y = 2;     
+    const int real_0_x = 2;     
+    const int real_0_y = 2;     
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -182,7 +182,7 @@ struct manhattan_distance_comparator {
 bool checkComplete(const vector<vector<int>> &a)
 {
     static vector<vector<int>> completed = { {1,2,3}, {4,5,6}, {7,8,0} };
-    
+
     if (completed == a)
     {
         return true;
