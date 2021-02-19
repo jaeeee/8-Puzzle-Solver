@@ -24,119 +24,11 @@ struct puzzle_state
     vector<vector<int>> game_state;
     int empty_slot_x = 0;
     int empty_slot_y = 0;
-    shared_ptr<puzzle_state> move = nullptr;
+    shared_ptr<puzzle_state> pre_state = nullptr;
     int depth = 0;
 };
 
-struct uniform_cost_comparator{
-    bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
-        return true;
-    }
-};
-
-vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
-{
-    vector<shared_ptr<puzzle_state>> return_value;
-
-    //forward x-coordinate
-    for (int i = current_state->empty_slot_x + 1; i < 3; i++)
-    {
-        auto puzzle_copy = current_state->game_state;
-        rotate(puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x, 
-            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x + 1, 
-            puzzle_copy[current_state->empty_slot_y].begin() + i);
-        return_value.push_back(make_shared<puzzle_state>(puzzle_state{move(puzzle_copy), i, current_state->empty_slot_y, current_state}));
-    }
-
-    //backwards x-coordinate
-    for (int j = 0; j < current_state->empty_slot_x; j++)
-    {
-        auto puzzle_copy = current_state->game_state;
-        rotate(puzzle_copy[current_state->empty_slot_y].begin() + j, 
-            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x, 
-            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x + 1);
-        return_value.push_back(make_shared<puzzle_state>(puzzle_state{move(puzzle_copy), j, current_state->empty_slot_y, current_state}));
-    }
-
-    //forwards y-coordinate
-    for (int k = current_state->empty_slot_y + 1; k < 3; k++) {
-        auto puzzle_copy = current_state->game_state;
-        for (int i = current_state->empty_slot_y; i < k - 1; i++) {
-            swap(puzzle_copy[i][current_state->empty_slot_x], puzzle_copy[i+1][current_state->empty_slot_x]);
-        }
-        return_value.push_back(make_shared<puzzle_state>(puzzle_state{move(puzzle_copy), current_state->empty_slot_x, k, current_state}));
-
-    }
-
-    //backwards y-coordinate
-    for (int l = 0; l < current_state->empty_slot_y; l++) {
-        auto puzzle_copy = current_state->game_state;
-          for (int i = current_state->empty_slot_y; i > l; i--) {
-            swap(puzzle_copy[i][current_state->empty_slot_x], puzzle_copy[i-1][current_state->empty_slot_x]);
-        }
-        return_value.push_back(make_shared<puzzle_state>(puzzle_state{move(puzzle_copy), current_state->empty_slot_x, l, current_state}));
-    } 
-    return return_value;
-}
-
-
-
-
-/*
-function general-search(problem, QUEUEING-FUNCTION)
-nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL-STATE))
-loop do
-if EMPTY(nodes) then return "failure"
- node = REMOVE-FRONT(nodes)
-if problem.GOAL-TEST(node.STATE) succeeds then return node
- nodes = QUEUEING-FUNCTION(nodes, EXPAND(node, problem.OPERATORS))
-end
-*/
-
-// void generalSearch(int choice, vector<vector<int>> a)
-void generalSearch(int choice, const shared_ptr<puzzle_state> &a)
-{
-    shared_ptr<puzzle_state> xd;
-
-    /**
-1. Uniform Cost Search
-2. A* with the Misplaced Tile heuristic.
-3. A* with the Manhattan distance heuristic.
-     */
-    switch (choice)
-    {
-    case 1:
-    // priority_queue<shared_ptr<puzzle_state>, uniform_cost_comparator> p_q;
-    xd = a;
-    // p_q.push(xd);
-    // while (true) {
-    //     if (p_q.empty()) {
-    //         return;
-    //     }
-    //     auto current = p_q.top();
-    //     p_q.pop();   
-    // }
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    }
-}
-
-void displayPuzzle(vector<vector<int>> puzzle)
-{
-    for (int i = 0; i < puzzle.size(); i++)
-    {
-        for (int j = 0; j < puzzle[i].size(); j++)
-        {
-            cout << puzzle[i][j] << ' ';
-        }
-        cout << endl;
-    }
-}
-
-bool checkComplete(vector<vector<int>> a)
+bool checkComplete(const vector<vector<int>> &a)
 {
     vector<vector<int>> completed;
     completed.resize(3, vector<int>(3, 0));
@@ -157,6 +49,153 @@ bool checkComplete(vector<vector<int>> a)
     else
     {
         return false;
+    }
+}
+
+struct uniform_cost_comparator{
+    bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
+        if (a->depth > b->depth) {
+        return true;
+        } else {
+            return false;
+        }
+    }
+};
+
+vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
+{
+    vector<shared_ptr<puzzle_state>> return_value;
+
+    //forward x-coordinate
+    for (int i = current_state->empty_slot_x + 1; i < 3; i++)
+    {
+        auto puzzle_copy = current_state->game_state;
+        rotate(puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x, 
+            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x + 1, 
+            puzzle_copy[current_state->empty_slot_y].begin() + i);
+        return_value.push_back(make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), i, current_state->empty_slot_y, current_state, current_state->depth+1
+            }));
+    }
+
+    //backwards x-coordinate
+    for (int j = 0; j < current_state->empty_slot_x; j++)
+    {
+        auto puzzle_copy = current_state->game_state;
+        rotate(puzzle_copy[current_state->empty_slot_y].begin() + j, 
+            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x, 
+            puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x + 1);
+        return_value.push_back(make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), j, current_state->empty_slot_y, current_state, current_state->depth+1
+            }));
+    }
+
+    //forwards y-coordinate
+    for (int k = current_state->empty_slot_y + 1; k < 3; k++) {
+        auto puzzle_copy = current_state->game_state;
+        for (int i = current_state->empty_slot_y; i < k - 1; i++) {
+            swap(puzzle_copy[i][current_state->empty_slot_x], puzzle_copy[i+1][current_state->empty_slot_x]);
+        }
+        return_value.push_back(make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x, k, current_state, current_state->depth+1
+            }));
+
+    }
+
+    //backwards y-coordinate
+    for (int l = 0; l < current_state->empty_slot_y; l++) {
+        auto puzzle_copy = current_state->game_state;
+          for (int i = current_state->empty_slot_y; i > l; i--) {
+            swap(puzzle_copy[i][current_state->empty_slot_x], puzzle_copy[i-1][current_state->empty_slot_x]);
+        }
+        return_value.push_back(make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x, l, current_state, current_state->depth+1
+            }));
+    } 
+    return return_value;
+}
+
+
+
+
+/*
+function general-search(problem, QUEUEING-FUNCTION)
+nodes = MAKE-QUEUE(MAKE-NODE(problem.INITIAL-STATE))
+loop do
+if EMPTY(nodes) then return "failure"
+ node = REMOVE-FRONT(nodes)
+if problem.GOAL-TEST(node.STATE) succeeds then return node
+ nodes = QUEUEING-FUNCTION(nodes, EXPAND(node, problem.OPERATORS))
+end
+*/
+
+// void generalSearch(int choice, vector<vector<int>> a)
+shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state> &a)
+{
+    // shared_ptr<puzzle_state> xd;
+
+    /**
+1. Uniform Cost Search
+2. A* with the Misplaced Tile heuristic.
+3. A* with the Manhattan distance heuristic.
+     */
+
+    if (choice == 1) {
+        //type, container, comparison function
+        priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, uniform_cost_comparator> p_q;
+    //  xd = a;
+     p_q.push(a);
+     while (true) {
+         if (p_q.empty()) {
+             return nullptr;
+        }
+         auto current = p_q.top();
+         p_q.pop();   
+         if (checkComplete(current->game_state) == true) {
+             return current;
+         } else {
+             vector<shared_ptr<puzzle_state>> next_states = expand(current);
+             for (const auto& next_state : next_states) {
+                 p_q.push(next_state);
+             }
+         }
+     }
+    } else if (choice == 2) {
+
+    } else if (choice ==3) {
+
+    }
+
+    // switch (choice)
+    // {
+    // case 1:
+    // priority_queue<shared_ptr<puzzle_state>, uniform_cost_comparator> p_q;
+    // xd = a;
+    // // p_q.push(xd);
+    // // while (true) {
+    // //     if (p_q.empty()) {
+    // //         return;
+    // //     }
+    // //     auto current = p_q.top();
+    // //     p_q.pop();   
+    // // }
+    //     break;
+    // case 2:
+    //     break;
+    // case 3:
+    //     break;
+    // }
+}
+
+void displayPuzzle(vector<vector<int>> puzzle)
+{
+    for (int i = 0; i < puzzle.size(); i++)
+    {
+        for (int j = 0; j < puzzle[i].size(); j++)
+        {
+            cout << puzzle[i][j] << ' ';
+        }
+        cout << endl;
     }
 }
 
@@ -229,30 +268,45 @@ int main()
     bool chosen = false;
     while (chosen == false)
     {
-        switch (algoChoice)
-        {
-        case 1:
-            generalSearch(1, init_state);
+        if (algoChoice == 1) {
+            cout << "loading" << endl;
+            shared_ptr<puzzle_state> a = generalSearch(1, init_state);
+            if (a == nullptr) {
+                cout << "The matrix is unsolvable." << endl; 
+                return 0;
+            } else {
+            cout << "The depth for this algorithm is " << a->depth << endl;
+            }
             chosen = true;
-            break;
-        case 2:
-            generalSearch(2, init_state);
+            cout << "done" << endl;
+        } else if (algoChoice == 2) {
+            shared_ptr<puzzle_state> a = generalSearch(2, init_state);
+            cout << "The depth for this algorithm is " << a->depth << endl;
             chosen = true;
-            break;
-        case 3:
-            generalSearch(3, init_state);
+        } else if (algoChoice == 3) {
+            shared_ptr<puzzle_state> a = generalSearch(3, init_state);
+            cout << "The depth for this algorithm is " << a->depth << endl;
             chosen = true;
-            break;
-        default:
-            cout << "Error: no choice provided. Re-enter choice or quit (ctrl + c)" << endl;
-            // char quit;
-            // cin >> quit; 
-            // if (quit == 'y') {
-            //     exit(0);
-            // } else {
-            cin >> algoChoice;
-            // }
-            break;
         }
+        // switch (algoChoice)
+        // {
+        // case 1:
+        //     shared_ptr<puzzle_state> a = generalSearch(1, init_state);
+        //     cout << "The depth for this algorithm is " << a->depth << endl;
+        //     chosen = true;
+        //     break;
+        // case 2:
+        //     generalSearch(2, init_state);
+        //     chosen = true;
+        //     break;
+        // case 3:
+        //     generalSearch(3, init_state);
+        //     chosen = true;
+        //     break;
+        // default:
+        //     cout << "Error: no choice provided. Re-enter choice or quit (ctrl + c)" << endl;
+        //     cin >> algoChoice;
+        //     break;
+        // }
     }
 }
