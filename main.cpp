@@ -203,7 +203,7 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
         auto puzzle_copy = current_state->game_state;
         rotate(puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x, 
             puzzle_copy[current_state->empty_slot_y].begin() + current_state->empty_slot_x + 1, 
-            puzzle_copy[current_state->empty_slot_y].begin() + i);
+            puzzle_copy[current_state->empty_slot_y].begin() + i + 1);
         node_children.push_back(make_shared<puzzle_state>(puzzle_state{
             move(puzzle_copy), i, current_state->empty_slot_y, current_state, current_state->depth+1
             }));
@@ -376,6 +376,7 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
     // case 3:
     //     break;
     // }
+        return nullptr;
 }
 
 void displayPuzzle(vector<vector<int>> puzzle)
