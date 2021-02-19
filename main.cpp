@@ -53,6 +53,38 @@ bool checkComplete(const vector<vector<int>> &a)
     }
 }
 
+int countMisplacedTiles(const vector<vector<int>> &a) {
+    int sum = 0;
+    if (a[0][0] != 1) {
+        sum++;
+    } 
+    if (a[0][1] != 2) {
+        sum++;
+    }
+    if (a[0][2] != 3) {
+        sum++;
+    }
+    if (a[1][0] != 4) {
+        sum++;
+    } 
+    if (a[1][1] != 5) {
+        sum++;
+    }
+    if (a[1][2] != 6) {
+        sum++;
+    }
+     if (a[2][0] != 7) {
+        sum++;
+    } 
+    if (a[2][1] != 8) {
+        sum++;
+    }
+    if (a[2][2] != 0) {
+        sum++;
+    }
+    return sum;    
+}
+
 struct uniform_cost_comparator{
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         if (a->depth > b->depth) {
@@ -62,6 +94,33 @@ struct uniform_cost_comparator{
         }
     }
 };
+
+struct misplaced_tile_comparator{
+    bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
+        int misplacedA = countMisplacedTiles(a->game_state);
+        int misplacedB = countMisplacedTiles(b->game_state);
+        if (misplacedA > misplacedB) {
+            return true;
+        } 
+        else if (misplacedA == misplacedB) {
+        if (a->depth > b->depth) {
+            return true; 
+        }
+        } else {
+            return false;
+        }
+    }
+};
+
+// struct uniform_cost_comparator{
+//     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
+//         if (a->depth > b->depth) {
+//         return true;
+//         } else {
+//             return false;
+//         }
+//     }
+// };
 
 vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
 {
@@ -141,6 +200,8 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
 3. A* with the Manhattan distance heuristic.
      */
     auto start = std::chrono::steady_clock::now();
+
+    // Uniform Cost Search
     if (choice == 1) {
         //type, container, comparison function
         priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, uniform_cost_comparator> p_q;
@@ -165,8 +226,32 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
              }
          }
      }
-    } else if (choice == 2) {
 
+    // A* with the Misplaced Tile heuristic.
+    } else if (choice == 2) {\
+        priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, misplaced_tile_comparator> p_q;
+     p_q.push(a);
+     while (true) {
+         if (p_q.empty()) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
+             return nullptr;
+        }
+         auto current = p_q.top();
+         p_q.pop();   
+         if (checkComplete(current->game_state) == true) {
+               auto end = std::chrono::steady_clock::now();
+               cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
+             return current;
+         } else {
+             vector<shared_ptr<puzzle_state>> next_states = expand(current);
+             for (const auto& next_state : next_states) {
+                 p_q.push(next_state);
+             }
+         }
+     }
+
+    // A* with the Manhattan distance heuristic.
     } else if (choice ==3) {
 
     }
