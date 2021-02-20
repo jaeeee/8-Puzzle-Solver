@@ -253,32 +253,32 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
 
     if(current_state->empty_slot_x != 0) {
         auto puzzle_copy = current_state->game_state;
-        std::swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x - 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
-        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+        swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x - 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(make_shared<puzzle_state>(puzzle_state{
             move(puzzle_copy), current_state->empty_slot_x -1,current_state->empty_slot_y ,  current_state, current_state->depth + 1
             }));
     }
 
     if (current_state->empty_slot_y != 0) {
         auto puzzle_copy = current_state->game_state;
-        std::swap(puzzle_copy[current_state->empty_slot_y -1 ][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
-        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+        swap(puzzle_copy[current_state->empty_slot_y -1 ][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(make_shared<puzzle_state>(puzzle_state{
             move(puzzle_copy), current_state->empty_slot_x,current_state->empty_slot_y  -1 ,  current_state, current_state->depth + 1
             }));
     }
 
     if (current_state->empty_slot_x != 2) {
         auto puzzle_copy = current_state->game_state;
-        std::swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x + 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
-        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+        swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x + 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(make_shared<puzzle_state>(puzzle_state{
             move(puzzle_copy), current_state->empty_slot_x +1,current_state->empty_slot_y ,  current_state, current_state->depth + 1
             }));
     }
 
     if (current_state->empty_slot_y != 2) {
         auto puzzle_copy = current_state->game_state;
-        std::swap(puzzle_copy[current_state->empty_slot_y+1][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
-        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+        swap(puzzle_copy[current_state->empty_slot_y+1][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(make_shared<puzzle_state>(puzzle_state{
             move(puzzle_copy), current_state->empty_slot_x,current_state->empty_slot_y+1 ,  current_state, current_state->depth + 1
             }));
     }
