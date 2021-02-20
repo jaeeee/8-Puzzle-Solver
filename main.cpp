@@ -278,9 +278,10 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
         priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, uniform_cost_comparator> p_q;
     //  xd = a;
      p_q.push(a);
-        int max_q_size = 1;     
+        int num_times_expanded = 0;
+        // int max_q_size = 1;     
      while (true) {
-         max_q_size = max(max_q_size,(int)p_q.size());
+        //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
@@ -291,10 +292,11 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
          if (checkComplete(current->game_state) == true) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
-               cout << "Nodes expanded: " << max_q_size << endl;
+               cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
          } else {
              vector<shared_ptr<puzzle_state>> next_states = expand(current);
+             num_times_expanded++;
              for (const auto& next_state : next_states) {
                  p_q.push(next_state);
              }
@@ -305,9 +307,9 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
     } else if (choice == 2) {\
         priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, misplaced_tile_comparator> p_q;
      p_q.push(a);
-        int max_q_size = 1;
+          int num_times_expanded = 0;
      while (true) {
-         max_q_size = max(max_q_size,(int)p_q.size());
+        //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
@@ -318,10 +320,11 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
          if (checkComplete(current->game_state) == true) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
-               cout << "Nodes expanded: " << max_q_size << endl;
+               cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
          } else {
              vector<shared_ptr<puzzle_state>> next_states = expand(current);
+                 num_times_expanded++;
              for (const auto& next_state : next_states) {
                  p_q.push(next_state);
              }
@@ -332,9 +335,10 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
     } else if (choice ==3) {
         priority_queue<shared_ptr<puzzle_state>, vector<shared_ptr<puzzle_state>>, manhattan_distance_comparator> p_q;
     p_q.push(a);
-         int max_q_size = 1;
+        int num_times_expanded = 0;
+        //  int max_q_size = 1;
      while (true) {
-         max_q_size = max(max_q_size,(int)p_q.size());
+        //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
@@ -345,10 +349,11 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
          if (checkComplete(current->game_state) == true) {
                auto end = std::chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
-               cout << "Nodes expanded: " << max_q_size << endl;
+               cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
          } else {
              vector<shared_ptr<puzzle_state>> next_states = expand(current);
+                 num_times_expanded++;
              for (const auto& next_state : next_states) {
                  p_q.push(next_state);
              }
