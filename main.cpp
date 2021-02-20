@@ -18,6 +18,8 @@ struct puzzle_state
     int depth = 0;
 };
 
+
+// counts misplaced tiles for A* algo using Misplaced Tile Heuristic
 int countMisplacedTiles(const vector<vector<int>> &a) {
     int sum = 0;
     if (a[0][0] != 1) {
@@ -50,6 +52,8 @@ int countMisplacedTiles(const vector<vector<int>> &a) {
     return sum;    
 }
 
+
+// calculates Manhattan Distance for A* algorithm using Manhattan Distance Heuristic
 int evaluateManhattanDistance(const vector<vector<int>> &a) {
     //find x,y pos of 1.
     //distance += abs(x - actual_x) + abs(y - real_y)
@@ -131,6 +135,8 @@ int evaluateManhattanDistance(const vector<vector<int>> &a) {
     
 }
 
+
+// uniform cost algorithm comparator for priority queue
 struct uniform_cost_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         if (a->depth > b->depth) {
@@ -141,6 +147,7 @@ struct uniform_cost_comparator {
     }
 };
 
+// misplaced tile algorithm comparator for priority queue
 struct misplaced_tile_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         int misplacedA = countMisplacedTiles(a->game_state);
@@ -160,6 +167,7 @@ struct misplaced_tile_comparator {
     }
 };
 
+// manhattan distance algorithm comparator for priority queue
 struct manhattan_distance_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         int manhattanA = evaluateManhattanDistance(a->game_state);
@@ -179,6 +187,7 @@ struct manhattan_distance_comparator {
 };
 
 
+// checks if matrix (parameter) is complete (matches goal state)
 bool checkComplete(const vector<vector<int>> &a)
 {
     static vector<vector<int>> completed = { {1,2,3}, {4,5,6}, {7,8,0} };
@@ -193,6 +202,7 @@ bool checkComplete(const vector<vector<int>> &a)
     }
 }
 
+// expands and builds tree of children pertaining to resultant matrices after single, legal moves
 vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
 {
     vector<shared_ptr<puzzle_state>> node_children;
@@ -297,6 +307,7 @@ if problem.GOAL-TEST(node.STATE) succeeds then return node
 end
 */
 
+// General Search Algorithm based on provided pseudo-code from professor. Takes in choice parameter which determines which algorithm/heuristic should be used
 // void generalSearch(int choice, vector<vector<int>> a)
 shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state> &a)
 {
@@ -421,6 +432,7 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
         return nullptr;
 }
 
+// displays matrix 
 void displayPuzzle(vector<vector<int>> puzzle)
 {
     for (int i = 0; i < puzzle.size(); i++)
@@ -433,6 +445,7 @@ void displayPuzzle(vector<vector<int>> puzzle)
     }
 }
 
+// recursive traversal of built tree of solution (determined optimal path)
 void display_full_puzzle(const shared_ptr<puzzle_state>& state){
     if(state == nullptr) {
         return;
