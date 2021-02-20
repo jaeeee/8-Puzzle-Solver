@@ -261,6 +261,7 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
 
     **/
 
+    // moves "0" to the left if not out of bounds
     if(current_state->empty_slot_x != 0) {
         auto puzzle_copy = current_state->game_state;
         swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x - 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
@@ -269,6 +270,7 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
             }));
     }
 
+    // moves "0" to the up if not out of bounds 
     if (current_state->empty_slot_y != 0) {
         auto puzzle_copy = current_state->game_state;
         swap(puzzle_copy[current_state->empty_slot_y -1 ][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
@@ -276,7 +278,8 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
             move(puzzle_copy), current_state->empty_slot_x,current_state->empty_slot_y  -1 ,  current_state, current_state->depth + 1
             }));
     }
-
+    
+    // moves "0" to the right if not out of bounds
     if (current_state->empty_slot_x != 2) {
         auto puzzle_copy = current_state->game_state;
         swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x + 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
@@ -285,6 +288,7 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
             }));
     }
 
+    // moves "0" down if not out of bounds
     if (current_state->empty_slot_y != 2) {
         auto puzzle_copy = current_state->game_state;
         swap(puzzle_copy[current_state->empty_slot_y+1][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
