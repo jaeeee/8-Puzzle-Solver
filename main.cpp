@@ -227,7 +227,7 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
     //forwards y-coordinate
     for (int k = current_state->empty_slot_y + 1; k < 3; k++) {
         auto puzzle_copy = current_state->game_state;
-        for (int i = current_state->empty_slot_y; i < k - 1; i++) {
+        for (int i = current_state->empty_slot_y; i < k; i++) {
             swap(puzzle_copy[i][current_state->empty_slot_x], puzzle_copy[i+1][current_state->empty_slot_x]);
         }
         node_children.push_back(make_shared<puzzle_state>(puzzle_state{
