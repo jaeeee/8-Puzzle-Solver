@@ -164,7 +164,7 @@ struct manhattan_distance_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         int manhattanA = evaluateManhattanDistance(a->game_state);
         int manhattanB = evaluateManhattanDistance(b->game_state);
-        if (manhattanA > manhattanB) {
+        if (manhattanA + a->depth > manhattanB + b->depth) {
             return true;
         } else if (manhattanA == manhattanB) {
             if (a->depth > b->depth) {
@@ -196,6 +196,8 @@ bool checkComplete(const vector<vector<int>> &a)
 vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_state)
 {
     vector<shared_ptr<puzzle_state>> node_children;
+
+    /**
 
     //forward x-coordinate
     for (int i = current_state->empty_slot_x + 1; i < 3; i++)
@@ -246,6 +248,41 @@ vector<shared_ptr<puzzle_state>> expand(const shared_ptr<puzzle_state> &current_
             move(puzzle_copy), current_state->empty_slot_x, l, current_state, current_state->depth+1
             }));
     } 
+
+    **/
+
+    if(current_state->empty_slot_x != 0) {
+        auto puzzle_copy = current_state->game_state;
+        std::swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x - 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x -1,current_state->empty_slot_y ,  current_state, current_state->depth + 1
+            }));
+    }
+
+    if (current_state->empty_slot_y != 0) {
+        auto puzzle_copy = current_state->game_state;
+        std::swap(puzzle_copy[current_state->empty_slot_y -1 ][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x,current_state->empty_slot_y  -1 ,  current_state, current_state->depth + 1
+            }));
+    }
+
+    if (current_state->empty_slot_x != 2) {
+        auto puzzle_copy = current_state->game_state;
+        std::swap(puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x + 1], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x +1,current_state->empty_slot_y ,  current_state, current_state->depth + 1
+            }));
+    }
+
+    if (current_state->empty_slot_y != 2) {
+        auto puzzle_copy = current_state->game_state;
+        std::swap(puzzle_copy[current_state->empty_slot_y+1][current_state->empty_slot_x], puzzle_copy[current_state->empty_slot_y][current_state->empty_slot_x]);
+        node_children.push_back(std::make_shared<puzzle_state>(puzzle_state{
+            move(puzzle_copy), current_state->empty_slot_x,current_state->empty_slot_y+1 ,  current_state, current_state->depth + 1
+            }));
+    }
+    
     return node_children;
 }
 
