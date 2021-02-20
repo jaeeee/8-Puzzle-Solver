@@ -145,7 +145,7 @@ struct misplaced_tile_comparator {
     bool operator()(const shared_ptr<puzzle_state> &a, const shared_ptr<puzzle_state> &b) const {
         int misplacedA = countMisplacedTiles(a->game_state);
         int misplacedB = countMisplacedTiles(b->game_state);
-        if (misplacedA > misplacedB) {
+        if (misplacedA + a->depth > misplacedB + b->depth) {
             return true;
         } 
         else if (misplacedA == misplacedB) {
@@ -166,7 +166,7 @@ struct manhattan_distance_comparator {
         int manhattanB = evaluateManhattanDistance(b->game_state);
         if (manhattanA + a->depth > manhattanB + b->depth) {
             return true;
-        } else if (manhattanA == manhattanB) {
+        } else if (manhattanA + a->depth == manhattanB + b->depth) {
             if (a->depth > b->depth) {
                 return true;
             } else {
@@ -307,7 +307,7 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
 2. A* with the Misplaced Tile heuristic.
 3. A* with the Manhattan distance heuristic.
      */
-    auto start = std::chrono::steady_clock::now();
+    auto start = chrono::steady_clock::now();
 
     // Uniform Cost Search
     if (choice == 1) {
@@ -320,14 +320,14 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
      while (true) {
         //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
              return nullptr;
         }
          auto current = p_q.top();
          p_q.pop();   
          if (checkComplete(current->game_state) == true) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
                cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
@@ -348,14 +348,14 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
      while (true) {
         //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
              return nullptr;
         }
          auto current = p_q.top();
          p_q.pop();   
          if (checkComplete(current->game_state) == true) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
                cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
@@ -377,14 +377,14 @@ shared_ptr<puzzle_state> generalSearch(int choice, const shared_ptr<puzzle_state
      while (true) {
         //  max_q_size = max(max_q_size,(int)p_q.size());
          if (p_q.empty()) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
              return nullptr;
         }
          auto current = p_q.top();
          p_q.pop();   
          if (checkComplete(current->game_state) == true) {
-               auto end = std::chrono::steady_clock::now();
+               auto end = chrono::steady_clock::now();
                cout << "Algorithm took " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms." << endl;
                cout << "Nodes expanded: " << num_times_expanded << endl;
              return current;
@@ -433,12 +433,13 @@ void displayPuzzle(vector<vector<int>> puzzle)
     }
 }
 
-void display_full_puzzle(const std::shared_ptr<puzzle_state>& state){
+void display_full_puzzle(const shared_ptr<puzzle_state>& state){
     if(state == nullptr) {
         return;
     }
+    cout << "after " << state->depth << " move(s): " << endl;
     displayPuzzle(state->game_state);
-    std::cout << std::endl;
+    cout << endl;
     display_full_puzzle(state->pre_state);
     
 }
@@ -522,6 +523,13 @@ int main()
             } else {
             cout << "The depth for this algorithm is " << a->depth << endl;
             }
+            cout << "Do you want to step-through the algorithm? (y/n)" << endl;
+            cout << endl;
+            char choice_s;
+            cin >> choice_s;
+            if (choice_s == 'y') {
+                display_full_puzzle(a);
+            }
             chosen = true;
             // cout << "done" << endl;
         } else if (algoChoice == 2) {
@@ -531,6 +539,13 @@ int main()
                 return 0;
             }
             cout << "The depth for this algorithm is " << a->depth << endl;
+            cout << "Do you want to step-through the algorithm? (y/n)" << endl;
+            cout << endl;
+            char choice_s;
+            cin >> choice_s;
+            if (choice_s == 'y') {
+                display_full_puzzle(a);
+            }
             chosen = true;
         } else if (algoChoice == 3) {
             shared_ptr<puzzle_state> a = generalSearch(3, init_state);
@@ -539,8 +554,16 @@ int main()
                 return 0;
             }
             cout << "The depth for this algorithm is " << a->depth << endl;
+            cout << "Do you want to step-through the algorithm? (y/n)" << endl;
+            cout << endl;
+            char choice_s;
+            cin >> choice_s;
+            if (choice_s == 'y') {
+                display_full_puzzle(a);
+            }
             chosen = true;
         }
+
         // switch (algoChoice)
         // {
         // case 1:
